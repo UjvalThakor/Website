@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create the Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 20px; /* Add space between rows and columns */
+            text-align: center;
+            border: 1px solid black;
+        }
+        caption {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <caption>Student Register</caption>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Standard</th>
+                    <th>Division</th>
+                    <th>Roll Number</th>
+                    <th>Mobile Number</th>
+                    <th>Action</th><!-- New Action column -->
+                </tr>
+            </thead>
+            <tbody>
+            {% for ele in data %}
+                <tr>
+                    <td>{{ele.Student Name}}</td>
+                    <td>{{ele.Standard}}</td>
+                    <td>{{ele.Division}}</td>
+                    <td>{{ele.Roll Number}}</td>
+                    <td>{{ele.Mobile Number}}</td>
+                    <td>
+                        <!-- Form for Edit Button -->
+                        <form action="{% url 'edit' ele.id ele.Standard %}" style="display:inline;">
+                           {% csrf_token %}
+                            <button type="submit">Edit</button>
+                        </form>
+
+                        <!-- Form for Delete Button -->
+                        <form action="{% url 'delete' ele.id  ele.Standard %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+
+                        <!-- Form for View Button (GET request, no CSRF needed) -->
+                        <form action="{% url 'viewdata' ele.id ele.Standard %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">View</button>
+                        </form>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

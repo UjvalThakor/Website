@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Input</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" value="{{data.fullname}}" required>
+            </div>
+            <div class="form-group">
+                <label for="employeeId">Employee ID</label>
+                <input type="text" id="employeeId" name="employeeId" placeholder="Enter your employee ID" value="{{data.employeeId}}" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <input type="text" id="role" name="role" placeholder="Enter your role" value="{{data.role}}" required>
+            </div>
+            <div class="form-group">
+                <label for="birthdate">Birthdate</label>
+                <input type="date" id="birthdate" name="birthdate" value="{{data.birthdate}}" required>
+            </div>
+            <div class="form-group">
+                <label for="joiningDate">Joining Date</label>
+                <input type="date" id="joiningDate" name="joiningDate" value="{{data.joiningDate}}" required>
+            </div>
+            <div class="form-group">
+                <label for="salary">Salary</label>
+                <input type="number" id="salary" name="salary" placeholder="Enter salary" value="{{data.salary}}" required>
+            </div>
+            <div class="form-group">
+                <label for="totalSalary">Total Salary</label>
+                <input type="number" id="totalSalary" name="totalSalary" placeholder="Auto-calculated total salary" value="{{data.totalSalary}}" readonly>
+            </div>
+            <button type="submit">Update</button>
+        </form>
+    </div>
+
+    <script>
+        // Example function to handle the form submission
+        function submitEmployeeInput() {
+            const fullname = document.getElementById('fullname').value;
+            const employeeId = document.getElementById('employeeId').value;
+            const role = document.getElementById('role').value;
+            const birthdate = document.getElementById('birthdate').value;
+            const joiningDate = document.getElementById('joiningDate').value;
+            const salary = document.getElementById('salary').value;
+
+            if (fullname && employeeId && role && birthdate && joiningDate && salary) {
+                const totalSalary = salary * 12; // Example calculation
+                alert(`Submitted Data:\n\nFull Name: ${fullname}\nEmployee ID: ${employeeId}\nRole: ${role}\nBirthdate: ${birthdate}\nJoining Date: ${joiningDate}\nSalary: ${salary}\nTotal Salary: ${totalSalary}`);
+                // Add your logic here to process or send the data to a server using fetch or AJAX.
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+    </script>
+</body>
+</html>

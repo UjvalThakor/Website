@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator and Strings</title>
+
+<style>
+  body{
+    font-family: Arial, sans-serif;
+    background-color: aliceblue;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    height: 100vh;
+  }
+  .container{
+    background-color: azure;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10 rgba(0,0,0,0.1);
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .container h1{
+    text-align: center;
+    color: slategray;
+  }
+
+  label{
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  input[type="number"],input[type="text"],select,textarea{
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid rgb(246, 222, 222);
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  textarea{
+    resize: vertical;
+  }
+
+  .switch{
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 10px;
+
+  }
+  .switch input{
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: 0.4s;
+    background-color: #ccc;
+    border-radius: 34px;
+    }
+
+    .slider:before{
+      position: absolute;
+      content: "";
+      height:26px;
+      width:26px;
+      bottom: 4px;
+      left: 4px;
+      transition: 0.4s;
+      background-color: white;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider{
+      background-color: lightblue;
+    }
+
+    input:checked + .slider:before{
+      transform: translateX(26px);
+    }
+
+    .bth{
+      background-color: lightblue;
+      color: white;
+      padding:  10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .bth:hover{
+      background-color: #232423;
+    }
+
+    .switch-container{
+      display: flex;
+      align-items: center;
+      margin-bottom:15px ;
+    }
+
+    .switch-lable{
+      margin-left: 10px;
+    }
+</style>
+</head>
+<body>
+  <div class="container">
+      <h1>Calculator and String opertaion</h1>
+
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="form_identifier" value="numeric_form">
+        <input type="number" name="firstno" placeholder="ENTER THE FIRST NUMBER ::->" min="0" max="1234567">
+        <input type="number" name="secondno" placeholder="ENTER THE SECOND NMBER ::->" min="0" max="1234567">
+
+        <label for="operation1">Which Operation will you perform:-></label>
+        <select id="operation1" name="operation1">
+          <option value="Add">+</option>
+          <option value="Sub">-</option>
+          <option value="Multi">*</option>
+          <option value="Divided">/</option>
+          <option value="Mod">%</option>
+          <option value="Floor Division">//</option>
+          <option value="Exponents">**</option>
+        </select>
+
+        <label for="text-content1">Write the content</label>
+        <textarea id="text-content1" name="text-content1" rows="4" cols="40">{{ content }}</textarea>
+
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+           <span class="Switch-label">Toggle-Switch </span>
+        </div>
+
+        <input type="submit" value="Submit" class="bth">
+      </form>
+
+        <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="form_identifier" value="string_form">
+        <input type="text"  name="string-input" placeholder="ENTER THE STRING">
+        <label for="Operation">Which Operation will you perform:-></label>
+        <select id="Operation" name="Operation">
+          <option value="Uppercase">Uppercase</option>
+          <option value="Lowercase">Lowercase</option>
+          <option value="Capitalize">Capitalize</option>
+          <option value="Join">Join</option>
+          <option value="Length">Length</option>
+          <option value="Count">Count</option>
+        </select>
+
+        <label for="text-content">Write The content</label>
+        <textarea id="text-content" name="text-content" min="0" max="1234567"></textarea>
+
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+           <span class="Switch-label">Toggle-Switch </span>
+        </div>
+
+        <label for="output-content">Output:-></label>
+        <textarea for="output-content" id="output-content" name="output-content" row="4" cols="40">{{ content }}</textarea>
+
+        <input type="submit" value="Submit" class="bth">
+      </form>
+  </div>
+</body>
+</html>

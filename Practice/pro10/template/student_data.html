@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table with Filter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                display: none;
+            }
+
+            td {
+                padding: 10px;
+                text-align: right;
+                position: relative;
+                padding-left: 50%;
+            }
+
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Employee Table with Filter</h2>
+
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search for names, roles, etc...">
+
+        <table id="employeeTable">
+            <thead>
+                <tr>
+                    <th>Sr_No</th>
+                    <th>Full Name</th>
+                    <th>Roll_No</th>
+                    <th>Standard</th>
+                    <th>Division</th>
+                    <th>Maths</th>
+                    <th>Eng</th>
+                    <th>Sci</th>
+                    <th>History</th>
+                    <th>Hindi</th>
+                    <th>Total_marks</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            {% for element in data %}
+                    <td>{{element.Sr_No}}</td>
+                    <td>{{element.Name}}</td>
+                    <td>{{element.Roll_No}}</td>
+                    <td>{{element.Standard}}</td>
+                    <td>{{element.Division}}</td>
+                    <td>{{element.Maths}}</td>
+                    <td>{{element.Eng}}</td>
+                    <td>{{element.Sci}}</td>
+                    <td>{{element.History}}</td>
+                    <td>{{element.Hindi}}</td>
+                    <td>{{element.Total_marks}}</td>
+                    <td>{{element.Percentage}}</td>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

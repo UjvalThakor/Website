@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeMaster Pro | Advanced Trading Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --chart-up: #16a34a;
+            --chart-down: #dc2626;
+        }
+
+        .dark-theme {
+            --bg-dark: #0f172a;
+            --bg-light: #1e293b;
+            --card-bg: #334155;
+            --border: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --chart-up: #22c55e;
+            --chart-down: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 60px 1fr 40px;
+            grid-template-areas:
+                "header header"
+                "sidebar main"
+                "footer footer";
+            height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            grid-area: header;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 30px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-actions button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .header-actions button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section h3 {
+            padding: 0 20px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .nav-link.active {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        main {
+            grid-area: main;
+            padding: 20px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            grid-template-rows: auto 1fr auto;
+            gap: 20px;
+            grid-template-areas:
+                "summary summary"
+                "chart watchlist"
+                "strategies orders";
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Portfolio Summary */
+        .portfolio-summary {
+            grid-area: summary;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .summary-change {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        /* Trading Chart */
+        .trading-chart {
+            grid-area: chart;
+            height: 400px;
+            position: relative;
+        }
+
+        .chart-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .chart-btn {
+            padding: 8px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .chart-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .timeframe-selector {
+            display: flex;
+            gap: 5px;
+            margin-left: auto;
+        }
+
+        .timeframe-btn {
+            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .timeframe-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Watchlist */
+        .watchlist {
+            grid-area: watchlist;
+        }
+
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .watchlist-item:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .watchlist-item:last-child {
+            border-bottom: none;
+        }
+
+        .stock-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stock-symbol {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .stock-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .stock-price {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .stock-change {
+            font-size: 0.85rem;
+            text-align: right;
+        }
+
+        /* Trading Strategies */
+        .trading-strategies {
+            grid-area: strategies;
+        }
+
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .strategy-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .strategy-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .strategy-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(37, 99, 235, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--primary);
+        }
+
+        .strategy-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .strategy-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .strategy-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        /* Orders */
+        .orders {
+            grid-area: orders;
+        }
+
+        .order-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-buy {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-sell {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-buy:hover {
+            background: #16a34a;
+        }
+
+        .btn-sell:hover {
+            background: #dc2626;
+        }
+
+        /* Footer */
+        footer {
+            grid-area: footer;
+            background: var(--secondary);
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .footer-links a:hover {
+            color: #cbd5e1;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        /* Candlestick chart styles */
+        .chart-container {
+            position: relative;
+            height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            main {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "summary"
+                    "chart"
+                    "watchlist"
+                    "strategies"
+                    "orders";
+            }
+
+            .portfolio-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "main"
+                    "footer";
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .portfolio-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <span>TradeMaster Pro</span>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search stocks, coins, or strategies...">
+            </div>
+            <div class="header-actions">
+                <button><i class="fas fa-bell"></i></button>
+                <button><i class="fas fa-cog"></i></button>
+                <div class="user-profile">
+                    <div class="user-avatar">JS</div>
+                    <span>John Smith</span>
+                </div>
+            </div>
+        </header>
+
+        <aside class="sidebar">
+            <div class="nav-section">
+                <h3>Trading</h3>
+                <a href="#" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="#" class="nav-link"><i class="fas fa-chart-bar"></i> Market</a>
+                <a href="#" class="nav-link"><i class="fas fa-wallet"></i> Portfolio</a>
+                <a href="#" class="nav-link"><i class="fas fa-exchange-alt"></i> Orders</a>
+            </div>
+            <div class="nav-section">
+                <h3>Strategies</h3>
+                <a href="#" class="nav-link"><i class="fas fa-robot"></i> Automated</a>
+                <a href="#" class="nav-link"><i class="fas fa-lightbulb"></i> Swing Trading</a>
+                <a href="#" class="nav-link"><i class="fas fa-bolt"></i> Day Trading</a>
+                <a href="#" class="nav-link"><i class="fas fa-moon"></i> Overnight</a>
+            </div>
+            <div class="nav-section">
+                <h3>Education</h3>
+                <a href="#" class="nav-link"><i class="fas fa-graduation-cap"></i> Learning Center</a>
+                <a href="#" class="nav-link"><i class="fas fa-book"></i> Strategy Library</a>
+                <a href="#" class="nav-link"><i class="fas fa-chalkboard-teacher"></i> Webinars</a>
+            </div>
+            <div class="nav-section">
+                <h3>Account</h3>
+                <a href="#" class="nav-link"><i class="fas fa-user"></i> Profile</a>
+                <a href="#" class="nav-link"><i class="fas fa-shield-alt"></i> Security</a>
+                <a href="#" class="nav-link"><i class="fas fa-question-circle"></i> Support</a>
+            </div>
+        </aside>
+
+        <main>
+            <section class="portfolio-summary card">
+                <div class="summary-item">
+                    <span class="summary-label">Portfolio Value</span>
+                    <span class="summary-value">$86,420.50</span>
+                    <span class="summary-change positive"><i class="fas fa-caret-up"></i> +2.3%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Available Cash</span>
+                    <span class="summary-value">$12,450.75</span>
+                    <span class="summary-change"></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Today's Profit</span>
+                    <span class="summary-value">$1,245.60</span>
+                    <span class="summary-change positive"><i class="fas fa-caret-up"></i> +1.8%</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Risk Level</span>
+                    <span class="summary-value">Medium</span>
+                    <span class="summary-change"></span>
+                </div>
+            </section>
+
+            <section class="trading-chart card">
+                <div class="card-header">
+                    <h2 class="card-title">AAPL - Apple Inc.</h2>
+                    <div>
+                        <span class="stock-price">$182.63</span>
+                        <span class="positive">+1.42%</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="candlestickChart"></canvas>
+                </div>
+                <div class="chart-toolbar">
+                    <button class="chart-btn active" data-type="candlestick">Candlestick</button>
+                    <button class="chart-btn" data-type="line">Line</button>
+                    <button class="chart-btn" data-type="bar">Bar</button>
+                    <div class="timeframe-selector">
+                        <button class="timeframe-btn" data-timeframe="1d">1D</button>
+                        <button class="timeframe-btn active" data-timeframe="1w">1W</button>
+                        <button class="timeframe-btn" data-timeframe="1m">1M</button>
+                        <button class="timeframe-btn" data-timeframe="3m">3M</button>
+                        <button class="timeframe-btn" data-timeframe="1y">1Y</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="watchlist card">
+                <div class="card-header">
+                    <h2 class="card-title">Watchlist</h2>
+                    <a href="#">View All</a>
+                </div>
+                <div class="watchlist-items">
+                    <div class="watchlist-item" data-symbol="AAPL">
+                        <div class="stock-info">
+                            <span class="stock-symbol">AAPL</span>
+                            <span class="stock-name">Apple Inc</span>
+                        </div>
+                        <div>
+                            <div class="stock-price">$182.63</div>
+                            <div class="stock-change positive">+1.42%</div>
+                        </div>
+                    </div>
+                    <div class="watchlist-item" data-symbol="TSLA">
+                        <div class="stock-info">
+                            <span class="stock-symbol">TSLA</span>
+                            <span class="stock-name">Tesla Inc</span>
+                        </div>
+                        <div>
+                            <div class="stock-price">$245.18</div>
+                            <div class="stock-change positive">+3.2%</div>
+                        </div>
+                    </div>
+                    <div class="watchlist-item" data-symbol="MSFT">
+                        <div class="stock-info">
+                            <span class="stock-symbol">MSFT</span>
+                            <span class="stock-name">Microsoft Corp</span>
+                        </div>
+                        <div>
+                            <div class="stock-price">$340.65</div>
+                            <div class="stock-change positive">+1.8%</div>
+                        </div>
+                    </div>
+                    <div class="watchlist-item" data-symbol="GOOGL">
+                        <div class="stock-info">
+                            <span class="stock-symbol">GOOGL</span>
+                            <span class="stock-name">Alphabet Inc</span>
+                        </div>
+                        <div>
+                            <div class="stock-price">$135.42</div>
+                            <div class="stock-change negative">-0.4%</div>
+                        </div>
+                    </div>
+                    <div class="watchlist-item" data-symbol="BTC-USD">
+                        <div class="stock-info">
+                            <span class="stock-symbol">BTC-USD</span>
+                            <span class="stock-name">Bitcoin USD</span>
+                        </div>
+                        <div>
+                            <div class="stock-price">$63,420.80</div>
+                            <div class="stock-change positive">+5.3%</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="trading-strategies card">
+                <div class="card-header">
+                    <h2 class="card-title">Profitable Strategies</h2>
+                    <a href="#">Create New</a>
+                </div>
+                <div class="strategy-grid">
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <div class="strategy-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <div class="strategy-title">Moving Average Crossover</div>
+                                <div class="strategy-desc">5-day & 20-day MA crossover</div>
+                            </div>
+                        </div>
+                        <div class="strategy-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">73%</div>
+                                <div class="stat-label">Success</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">12.4%</div>
+                                <div class="stat-label">Avg Profit</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">Trades</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <div class="strategy-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div>
+                                <div class="strategy-title">Breakout Strategy</div>
+                                <div class="strategy-desc">High volatility breakout</div>
+                            </div>
+                        </div>
+                        <div class="strategy-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">68%</div>
+                                <div class="stat-label">Success</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">9.2%</div>
+                                <div class="stat-label">Avg Profit</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">18</div>
+                                <div class="stat-label">Trades</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <div class="strategy-icon">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <div>
+                                <div class="strategy-title">RSI Divergence</div>
+                                <div class="strategy-desc">RSI & price divergence</div>
+                            </div>
+                        </div>
+                        <div class="strategy-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">81%</div>
+                                <div class="stat-label">Success</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">7.5%</div>
+                                <div class="stat-label">Avg Profit</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">32</div>
+                                <div class="stat-label">Trades</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="strategy-card">
+                        <div class="strategy-header">
+                            <div class="strategy-icon">
+                                <i class="fas fa-arrows-alt-h"></i>
+                            </div>
+                            <div>
+                                <div class="strategy-title">Mean Reversion</div>
+                                <div class="strategy-desc">Bollinger Bands reversal</div>
+                            </div>
+                        </div>
+                        <div class="strategy-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">65%</div>
+                                <div class="stat-label">Success</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">6.8%</div>
+                                <div class="stat-label">Avg Profit</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">27</div>
+                                <div class="stat-label">Trades</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="orders card">
+                <div class="card-header">
+                    <h2 class="card-title">Place Order</h2>
+                    <div class="order-tabs">
+                        <button class="btn btn-buy active" id="buyBtn">Buy</button>
+                        <button class="btn btn-sell" id="sellBtn">Sell</button>
+                    </div>
+                </div>
+                <div class="order-form">
+                    <div class="form-group">
+                        <label for="symbol">Symbol</label>
+                        <select id="symbol" class="form-control">
+                            <option>AAPL - Apple Inc.</option>
+                            <option>MSFT - Microsoft Corp</option>
+                            <option>TSLA - Tesla Inc</option>
+                            <option>GOOGL - Alphabet Inc</option>
+                            <option>AMZN - Amazon.com Inc</option>
+                            <option>BTC-USD - Bitcoin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderType">Order Type</label>
+                        <select id="orderType" class="form-control">
+                            <option>Market Order</option>
+                            <option>Limit Order</option>
+                            <option>Stop Loss</option>
+                            <option>Stop Limit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" class="form-control" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price ($)</label>
+                        <input type="number" id="price" class="form-control" value="182.63" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="duration">Duration</label>
+                        <select id="duration" class="form-control">
+                            <option>Day Order</option>
+                            <option>Good Till Cancel</option>
+                            <option>Immediate or Cancel</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="strategy">Strategy</label>
+                        <select id="strategy" class="form-control">
+                            <option>None</option>
+                            <option>Moving Average Crossover</option>
+                            <option>Breakout Strategy</option>
+                            <option>RSI Divergence</option>
+                            <option>Mean Reversion</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="order-summary">
+                    <div class="form-group">
+                        <label>Estimated Cost</label>
+                        <div class="form-control" id="estimatedCost">$1,826.30</div>
+                    </div>
+                    <button class="btn btn-buy" id="placeOrderBtn" style="width: 100%; padding: 12px; margin-top: 10px;">
+                        <i class="fas fa-check"></i> Confirm Buy Order
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="copyright">© 2023 TradeMaster Pro. All rights reserved.</div>
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <a href="#">Security</a>
+                <a href="#">Help Center</a>
+            </div>
+        </footer>
+
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </div>
+
+    <script>
+        // Generate candlestick data
+        function generateCandlestickData(count = 50, basePrice = 180) {
+            const data = [];
+            let currentDate = luxon.DateTime.now().minus({ days: count });
+            let currentPrice = basePrice;
+
+            for (let i = 0; i < count; i++) {
+                const open = currentPrice;
+                const volatility = 1.5 + Math.random() * 3;
+                const changePercent = (Math.random() - 0.5) * volatility / 100;
+                const close = open * (1 + changePercent);
+
+                const high = Math.max(open, close) * (1 + Math.random() * 0.01);
+                const low = Math.min(open, close) * (1 - Math.random() * 0.01);
+
+                data.push({
+                    x: currentDate.toJSDate(),
+                    o: open,
+                    h: high,
+                    l: low,
+                    c: close
+                });
+
+                currentPrice = close;
+                currentDate = currentDate.plus({ days: 1 });
+            }
+
+            return data;
+        }
+
+        // Create candlestick chart
+        const candlestickCtx = document.getElementById('candlestickChart').getContext('2d');
+        const candlestickData = generateCandlestickData();
+
+        const candlestickChart = new Chart(candlestickCtx, {
+            type: 'candlestick',
+            data: {
+                datasets: [{
+                    label: 'AAPL Price',
+                    data: candlestickData,
+                    borderColor: ctx => {
+                        const index = ctx.dataIndex;
+                        const value = candlestickData[index];
+                        return value.c >= value.o ? 'var(--chart-up)' : 'var(--chart-down)';
+                    },
+                    borderWidth: 1,
+                    backgroundColor: ctx => {
+                        const index = ctx.dataIndex;
+                        const value = candlestickData[index];
+                        return value.c >= value.o ? 'rgba(22, 163, 74, 0.2)' : 'rgba(220, 38, 38, 0.2)';
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const data = context.raw;
+                                return [
+                                    `Open: $${data.o.toFixed(2)}`,
+                                    `High: $${data.h.toFixed(2)}`,
+                                    `Low: $${data.l.toFixed(2)}`,
+                                    `Close: $${data.c.toFixed(2)}`
+                                ];
+                            }
+                        }
+                    },
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            mode: 'x'
+                        },
+                        zoom: {
+                            wheel: {
+                                enabled: true
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'x'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+
+            // Update chart colors based on theme
+            candlestickChart.update();
+        });
+
+        // Order type switching
+        const buyBtn = document.getElementById('buyBtn');
+        const sellBtn = document.getElementById('sellBtn');
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+        buyBtn.addEventListener('click', () => {
+            buyBtn.classList.add('active');
+            sellBtn.classList.remove('active');
+            placeOrderBtn.classList.remove('btn-sell');
+            placeOrderBtn.classList.add('btn-buy');
+            placeOrderBtn.innerHTML = '<i class="fas fa-check"></i> Confirm Buy Order';
+        });
+
+        sellBtn.addEventListener('click', () => {
+            sellBtn.classList.add('active');
+            buyBtn.classList.remove('active');
+            placeOrderBtn.classList.remove('btn-buy');
+            placeOrderBtn.classList.add('btn-sell');
+            placeOrderBtn.innerHTML = '<i class="fas fa-check"></i> Confirm Sell Order';
+        });
+
+        // Update estimated cost
+        const quantityInput = document.getElementById('quantity');
+        const priceInput = document.getElementById('price');
+        const costDisplay = document.getElementById('estimatedCost');
+
+        function updateCost() {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const cost = quantity * price;
+            costDisplay.textContent = `$${cost.toFixed(2)}`;
+        }
+
+        quantityInput.addEventListener('input', updateCost);
+        priceInput.addEventListener('input', updateCost);
+
+        // Initialize cost
+        updateCost();
+
+        // Place order functionality
+        placeOrderBtn.addEventListener('click', () => {
+            const symbol = document.getElementById('symbol').value.split(' - ')[0];
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const orderType = document.getElementById('orderType').value;
+            const action = buyBtn.classList.contains('active') ? 'Buy' : 'Sell';
+
+            if (quantity <= 0 || price <= 0) {
+                alert('Please enter valid quantity and price');
+                return;
+            }
+
+            alert(`Order placed successfully!\n${action} ${quantity} shares of ${symbol} at $${price.toFixed(2)}`);
+
+            // Reset form
+            quantityInput.value = '10';
+            priceInput.value = '182.63';
+            updateCost();
+        });
+
+        // Chart type switching
+        const chartBtns = document.querySelectorAll('.chart-btn');
+        chartBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                chartBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                candlestickChart.config.type = btn.dataset.type;
+                candlestickChart.update();
+            });
+        });
+
+        // Timeframe switching
+        const timeframeBtns = document.querySelectorAll('.timeframe-btn');
+        timeframeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                timeframeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // In a real app, this would fetch new data for the selected timeframe
+                // For this demo, we'll just regenerate with different volatility
+                const volatility = {
+                    '1d': 0.8,
+                    '1w': 1.2,
+                    '1m': 1.8,
+                    '3m': 2.5,
+                    '1y': 3.5
+                }[btn.dataset.timeframe];
+
+                const newData = generateCandlestickData(50, 180, volatility);
+                candlestickChart.data.datasets[0].data = newData;
+                candlestickChart.update();
+            });
+        });
+
+        // Watchlist item click
+        const watchlistItems = document.querySelectorAll('.watchlist-item');
+        watchlistItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const symbol = item.dataset.symbol;
+                const symbolName = item.querySelector('.stock-name').textContent;
+
+                // Update chart title
+                document.querySelector('.trading-chart .card-title').textContent = `${symbol} - ${symbolName}`;
+
+                // Generate new data for the selected symbol
+                const newData = generateCandlestickData(50,
+                    symbol === 'TSLA' ? 240 :
+                    symbol === 'MSFT' ? 340 :
+                    symbol === 'GOOGL' ? 135 :
+                    symbol === 'BTC-USD' ? 63000 : 180);
+
+                candlestickChart.data.datasets[0].data = newData;
+                candlestickChart.update();
+
+                // Update order form
+                const price = parseFloat(item.querySelector('.stock-price').textContent.replace('$', ''));
+                document.getElementById('price').value = price.toFixed(2);
+                document.getElementById('symbol').value = `${symbol} - ${symbolName}`;
+                updateCost();
+            });
+        });
+
+        // Simulate price changes
+        setInterval(() => {
+            watchlistItems.forEach(item => {
+                const priceElement = item.querySelector('.stock-price');
+                const changeElement = item.querySelector('.stock-change');
+
+                let price = parseFloat(priceElement.textContent.replace('$', ''));
+                const change = (Math.random() - 0.5) * 1.5;
+                const newPrice = price * (1 + change/100);
+
+                priceElement.textContent = `$${newPrice.toFixed(2)}`;
+                changeElement.textContent = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+                changeElement.className = `stock-change ${change >= 0 ? 'positive' : 'negative'}`;
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

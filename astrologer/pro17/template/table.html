@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load custom_filters %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Turtle Magic Square</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <style>
+        /* General Body and Container Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0c1027, #050814);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #e6f7ff;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(8, 15, 40, 0.6);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+                        0 0 60px rgba(101, 252, 249, 0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(101, 252, 249, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: floatIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(101, 252, 249, 0.2), transparent 80%);
+            z-index: -1;
+            animation: glow 4s infinite alternate;
+        }
+
+        h1 {
+            font-size: 3.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #65fcf1, #45a29e, #a0e7e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 25px rgba(101, 252, 249, 0.4);
+            animation: titleGlow 3s infinite alternate;
+            letter-spacing: 1px;
+            font-weight: 800;
+            animation: titleAppear 1s 0.3s forwards;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            color: #a0e7e5;
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(101, 252, 249, 0.3);
+            animation: floatIn 0.8s 0.5s forwards;
+        }
+
+        /* Date Picker Styles */
+        .date-picker-container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 25px;
+            background: rgba(15, 35, 80, 0.6);
+            border-radius: 20px;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 0 35px rgba(101, 252, 249, 0.25);
+            animation: floatIn 0.8s 0.7s forwards;
+        }
+
+        .date-label {
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: block;
+            font-size: 1.3rem;
+            color: #65fcf1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
+            border: 2px solid #65fcf1;
+            background: rgba(10, 20, 45, 0.8);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 25px rgba(101, 252, 249, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Turtle Container and Elements Styles */
+        .turtle-container {
+            position: relative;
+            width: 700px;
+            height: 600px;
+            margin: 0 auto 50px;
+            perspective: 1200px;
+            animation: turtleAppear 1.2s 1s forwards;
+        }
+
+        .mystical-turtle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            animation: float 12s infinite ease-in-out;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
+        }
+
+        .turtle-body {
+            position: absolute;
+            width: 500px;
+            height: 400px;
+            background: radial-gradient(circle at center, #1d566e, #143c52, #0d2a3d);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                0 0 80px rgba(101, 252, 249, 0.3),
+                inset 0 0 50px rgba(0, 0, 0, 0.8);
+            border: 4px solid #45a29e;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .turtle-shell {
+            position: absolute;
+            width: 420px;
+            height: 340px;
+            background: radial-gradient(circle at center, #143c52, #0d2a3d);
+            border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow:
+                inset 0 0 60px rgba(0, 0, 0, 0.95),
+                0 0 50px rgba(101, 252, 249, 0.2);
+            border: 3px solid #65fcf1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px;
+            padding: 25px;
+            z-index: 5;
+        }
+
+        .shell-segment {
+            background: rgba(15, 52, 96, 0.85);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #65fcf1;
+            font-size: 3.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid rgba(101, 252, 249, 0.4);
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                inset 0 0 15px rgba(0, 0, 0, 0.6),
+                0 5px 20px rgba(0, 0, 0, 0.4);
+            animation: pulse 4s infinite;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 15px rgba(101, 252, 249, 0.8);
+        }
+
+        .shell-segment::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(101, 252, 249, 0.3) 0%, transparent 70%);
+            transform: rotate(45deg);
+            pointer-events: none;
+            animation: shine 6s infinite;
+        }
+
+        .shell-segment:nth-child(1) { animation-delay: 0s; }
+        .shell-segment:nth-child(2) { animation-delay: 0.3s; }
+        .shell-segment:nth-child(3) { animation-delay: 0.6s; }
+        .shell-segment:nth-child(4) { animation-delay: 0.9s; }
+        .shell-segment:nth-child(5) {
+            background: rgba(69, 162, 158, 0.6);
+            transform: scale(1.15);
+            z-index: 10;
+            box-shadow:
+                inset 0 0 25px rgba(0, 0, 0, 0.7),
+                0 0 30px rgba(101, 252, 249, 0.5);
+        }
+        .shell-segment:nth-child(6) { animation-delay: 1.2s; }
+        .shell-segment:nth-child(7) { animation-delay: 1.5s; }
+        .shell-segment:nth-child(8) { animation-delay: 1.8s; }
+        .shell-segment:nth-child(9) { animation-delay: 2.1s; }
+
+        .shell-segment:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px rgba(101, 252, 249, 0.7);
+            background: rgba(25, 82, 156, 0.8);
+            z-index: 10;
+        }
+
+        .turtle-head {
+            position: absolute;
+            width: 110px;
+            height: 85px;
+            background: linear-gradient(to bottom, #1d566e, #143c52);
+            border-radius: 50%;
+            top: 45%;
+            left: -5px;
+            border: 3px solid #45a29e;
+            box-shadow: 0 0 25px rgba(101, 252, 249, 0.3);
+            z-index: 1;
+            animation: headMove 8s infinite;
+        }
+
+        .turtle-eye {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #65fcf1;
+            border-radius: 50%;
+            top: 40%;
+            right: 25px;
+            box-shadow: 0 0 20px #65fcf1;
+            animation: eyeBlink 6s infinite;
+        }
+
+        .turtle-eye::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .turtle-leg {
+            position: absolute;
+            width: 90px;
+            height: 95px;
+            background: linear-gradient(to bottom, #143c52, #1d566e);
+            border-radius: 50%;
+            border: 3px solid #45a29e;
+            z-index: 1;
+            animation: legMove 10s infinite;
+        }
+
+        .leg-front-left { top: 5%; left: 200px; animation-delay: 0s; }
+        .leg-front-right { top: 78%; right: 145px; animation-delay: 2s; }
+        .leg-back-left {  top:81%; left: 200px; animation-delay: 1s; }
+        .leg-back-right { bottom: 70%; right: 100px; animation-delay: 3s; }
+
+        .turtle-tail {
+            position: absolute;
+            width: 65px;
+            height: 40px;
+            background: linear-gradient(to bottom, #143c52, #1d566e);
+            border-radius: 50% 0 0 50%;
+            bottom: 40%;
+            right: 40px;
+            transform: rotate(-180deg);
+            z-index: 1;
+            border: 3px solid #45a29e;
+        }
+
+        .turtle-mouth {
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background: #0d2a3d;
+            border-radius: 50%;
+            top: 30%;
+            right: 25px;
+        }
+
+        .turtle-details {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .scale {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: rgba(101, 252, 249, 0.15);
+            border-radius: 50%;
+            box-shadow: inset 0 0 5px rgba(101, 252, 249, 0.3);
+        }
+
+        .scale-1 { top: 20%; left: 25%; }
+        .scale-2 { top: 15%; left: 40%; }
+        .scale-3 { top: 25%; left: 55%; }
+        .scale-4 { top: 35%; left: 30%; }
+        .scale-5 { top: 30%; left: 45%; }
+
+        /* Magic Square Info Styles */
+        .magic-square-info {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 35px;
+            background: rgba(15, 35, 80, 0.7);
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 78, 146, 0.8);
+            border: 2px solid rgba(101, 252, 249, 0.4);
+            backdrop-filter: blur(8px);
+            animation: floatIn 0.8s 1.2s forwards;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #65fcf1;
+            text-shadow: 0 0 15px rgba(101, 252, 249, 0.5);
+        }
+
+        .magic-properties {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .property-card {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(101, 252, 249, 0.3);
+            box-shadow: 0 0 30px rgba(101, 252, 249, 0.2);
+            transition: all 0.4s ease;
+            perspective: 500px;
+        }
+
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(101, 252, 249, 0.4);
+        }
+
+        .property-title {
+            font-size: 1.5rem;
+            color: #a0e7e5;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .property-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #65fcf1;
+            text-shadow: 0 0 15px rgba(101, 252, 249, 0.6);
+            margin: 15px 0;
+        }
+
+        .property-card p {
+            font-size: 1.1rem;
+            color: #b3e5fc;
+            line-height: 1.6;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            font-size: 1.1rem;
+            color: #81d4fa;
+            width: 100%;
+            border-top: 1px solid rgba(101, 252, 249, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            background: rgba(8, 15, 40, 0.4);
+            animation: floatIn 0.8s 1.4s forwards;
+        }
+
+        .magic-sum {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8rem;
+            color: #a0e7e5;
+            text-shadow: 0 0 10px rgba(101, 252, 249, 0.5);
+        }
+
+        .cosmic-message {
+            text-align: center;
+            margin: 30px 0;
+            min-height: 40px;
+            font-style: italic;
+            color: #a0e7e5;
+            font-size: 1.4rem;
+            opacity: 0.9;
+            text-shadow: 0 0 10px rgba(101, 252, 249, 0.4);
+            animation: floatIn 0.8s 0.9s forwards;
+        }
+
+        .turtle-claws {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #45a29e;
+            border-radius: 50%;
+        }
+
+        .claw-1 { top: 65%; left: 8px; }
+        .claw-2 { top: 50%; left: 0; }
+        .claw-3 { top: 65%; right: 8px; }
+        .claw-4 { top: 50%; right: 0; }
+
+        /* Background elements */
+        .bubble {
+            position: absolute;
+            background: rgba(101, 252, 249, 0.12);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            filter: blur(1px);
+        }
+
+        .star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: twinkle 4s infinite ease-in-out;
+        }
+
+        /* Keyframe animations */
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0) translateX(0); }
+            50% { transform: translate(-50%, -50%) translateY(-25px) translateX(15px); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(101, 252, 249, 0.5); }
+            70% { box-shadow: 0 0 0 20px rgba(101, 252, 249, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(101, 252, 249, 0); }
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 20px rgba(101, 252, 249, 0.4); }
+            100% { text-shadow: 0 0 40px rgba(101, 252, 249, 0.8); }
+        }
+
+        @keyframes floatIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes turtleAppear {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            20% { transform: rotate(45deg) translateX(100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes headMove {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(-8deg); }
+        }
+
+        @keyframes legMove {
+            0%, 100% { transform: rotate(20deg); }
+            50% { transform: rotate(25deg); }
+        }
+
+        @keyframes eyeBlink {
+            0%, 45%, 55%, 100% { height: 22px; }
+            48%, 52% { height: 2px; }
+        }
+
+        @keyframes titleAppear {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Owl Carousel Specific Styles */
+        .owl-carousel-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 35px;
+            background: rgba(15, 35, 80, 0.7);
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 78, 146, 0.8);
+            border: 2px solid rgba(101, 252, 249, 0.4);
+            backdrop-filter: blur(8px);
+            animation: floatIn 0.8s 1.4s forwards;
+            position: relative; /* Needed for absolute positioning of nav buttons */
+        }
+
+        .owl-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: #65fcf1;
+            text-shadow: 0 0 15px rgba(101, 252, 249, 0.5);
+        }
+
+        .owl-carousel {
+            margin-bottom: 20px;
+        }
+
+        .owl-item {
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(101, 252, 249, 0.3);
+            box-shadow: 0 0 30px rgba(101, 252, 249, 0.2);
+            transition: all 0.4s ease;
+            min-height: 250px; /* Ensure a consistent height for carousel items */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .owl-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(101, 252, 249, 0.4);
+        }
+
+        .owl-card-title {
+            font-size: 1.8rem;
+            color: #a0e7e5;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .owl-card-content {
+            font-size: 1.1rem;
+            color: #b3e5fc;
+            line-height: 1.6;
+        }
+
+        .owl-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            /* pointer-events: none; */ /* Removed to make default Owl nav buttons clickable */
+        }
+
+        .owl-nav button {
+            background: rgba(101, 252, 249, 0.2);
+            border: 2px solid #65fcf1;
+            color: #65fcf1;
+            font-size: 2rem;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(101, 252, 249, 0.4);
+            /* pointer-events: all; */ /* Removed as default Owl nav buttons handle this */
+        }
+
+        .owl-nav button:hover {
+            background: rgba(69, 162, 158, 0.5);
+            box-shadow: 0 0 25px rgba(101, 252, 249, 0.7);
+            transform: scale(1.1);
+        }
+
+        .owl-dots {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .owl-dot {
+            width: 12px;
+            height: 12px;
+            background: rgba(101, 252, 249, 0.3);
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .owl-dot.active {
+            background: #65fcf1;
+            transform: scale(1.2);
+        }
+
+        .owl-details {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #b3e5fc;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 900px) {
+            .turtle-container {
+                width: 90%;
+                height: 500px;
+            }
+
+            .turtle-body {
+                width: 400px;
+                height: 320px;
+            }
+
+            .turtle-shell {
+                width: 340px;
+                height: 270px;
+            }
+
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            .shell-segment {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .turtle-container {
+                height: 450px;
+            }
+
+            .turtle-body {
+                width: 320px;
+                height: 260px;
+            }
+
+            .turtle-shell {
+                width: 280px;
+                height: 220px;
+                padding: 20px;
+            }
+
+            .shell-segment {
+                font-size: 2rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .turtle-head {
+                width: 85px;
+                height: 65px;
+                left: -42px;
+            }
+
+            .turtle-leg {
+                width: 45px;
+                height: 80px;
+            }
+
+            .turtle-tail {
+                width: 50px;
+                height: 35px;
+                right: -35px;
+            }
+
+            .magic-properties {
+                grid-template-columns: 1fr;
+            }
+            .owl-item {
+                min-width: 260px;
+            }
+
+            .owl-card {
+                height: 320px;
+                padding: 20px;
+            }
+
+            .owl-title {
+                font-size: 1.8rem;
+            }
+
+            .owl-card-content {
+    border-radius: 20px;
+    padding: 20px;
+    color: #fff;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.card-mind_plane {
+    background: #4a90e2; /* Blue */
+}
+.card-heart_plane {
+    background: #e94e77; /* Pink */
+}
+.card-practical_plane {
+    background: #4caf50; /* Green */
+}
+.card-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+.message-list {
+    list-style: none;
+    padding-left: 20px;
+}
+.message-list li::before {
+    content: "✔ ";
+    color: #fff;
+}
+.no-data {
+    font-style: italic;
+    color: #ccc;
+}
+        }
+    </style>
+</head>
+<body>
+    <div class="bubbles">
+        <!-- Static bubbles -->
+        <div class="bubble" style="width: 80px; height: 80px; left: 15%; top: 10%; opacity: 0.2; animation-duration: 18s;"></div>
+        <div class="bubble" style="width: 50px; height: 50px; left: 80%; top: 30%; opacity: 0.15; animation-duration: 22s;"></div>
+        <div class="bubble" style="width: 100px; height: 100px; left: 45%; top: 70%; opacity: 0.25; animation-duration: 25s;"></div>
+        <div class="bubble" style="width: 60px; height: 60px; left: 65%; top: 20%; opacity: 0.18; animation-duration: 20s;"></div>
+        <div class="bubble" style="width: 90px; height: 90px; left: 25%; top: 60%; opacity: 0.22; animation-duration: 24s;"></div>
+    </div>
+
+    <div class="stars">
+        <!-- Static stars -->
+        <div class="star" style="width: 2px; height: 2px; left: 5%; top: 15%; animation-delay: 1s;"></div>
+        <div class="star" style="width: 3px; height: 3px; left: 85%; top: 25%; animation-delay: 2s;"></div>
+        <div class="star" style="width: 1px; height: 1px; left: 40%; top: 50%; animation-delay: 0.5s;"></div>
+        <div class="star" style="width: 2px; height: 2px; left: 70%; top: 65%; animation-delay: 3s;"></div>
+        <div class="star" style="width: 2.5px; height: 2.5px; left: 20%; top: 35%; animation-delay: 1.5s;"></div>
+        <div class="star" style="width: 1.5px; height: 1.5px; left: 60%; top: 10%; animation-delay: 2.5s;"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-hat-wizard"></i> COSMIC TURTLE MAGIC SQUARE</h1>
+            <p class="subtitle">Select a sacred date to unveil the ancient numerical wisdom of the celestial turtle</p>
+
+            <div class="date-picker-container">
+                <form method="post">
+                    {% csrf_token %}
+                    <label class="date-label">CHOOSE A SACRED DATE</label>
+                    <input type="date" id="datePicker" class="date-input" name="date" >
+                    <button type="submit" class="date-input" >Click Me!</button>
+                </form>
+
+            </div>
+        </header>
+
+        <div class="cosmic-message" id="cosmicMessage">
+            The cosmic turtle reveals the eternal wisdom of the Lo Shu square
+        </div>
+
+        <div class="turtle-container">
+            <div class="mystical-turtle">
+                <div class="turtle-body">
+                    <div class="turtle-details">
+                        <div class="scale scale-1"></div>
+                        <div class="scale scale-2"></div>
+                        <div class="scale scale-3"></div>
+                        <div class="scale scale-4"></div>
+                        <div class="scale scale-5"></div>
+                    </div>
+                    <div class="turtle-shell" id="turtleShell">
+                        {% for row in matrix %}
+                            {% for cell in row %}
+                                <div class="shell-segment">
+                                    {{ cell }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+                <div class="turtle-head">
+                    <div class="turtle-eye"></div>
+                    <div class="turtle-mouth"></div>
+                </div>
+                <div class="turtle-leg leg-front-left">
+                    <div class="turtle-claws claw-1"></div>
+                    <div class="turtle-claws claw-2"></div>
+                </div>
+                <div class="turtle-leg leg-front-right">
+                    <div class="turtle-claws claw-3"></div>
+                    <div class="turtle-claws claw-4"></div>
+                </div>
+                <div class="turtle-leg leg-back-left">
+                    <div class="turtle-claws claw-1"></div>
+                    <div class="turtle-claws claw-2"></div>
+                </div>
+                <div class="turtle-leg leg-back-right">
+                    <div class="turtle-claws claw-3"></div>
+                    <div class="turtle-claws claw-4"></div>
+                </div>
+                <div class="turtle-tail"></div>
+            </div>
+        </div>
+
+        <div class="magic-square-info">
+            <h2 class="info-title">THE COSMIC SQUARE PROPERTIES</h2>
+            <p class="magic-sum">Magic Constant: <span class="glow" id="magicConstant">15</span></p>
+
+            <div class="magic-properties">
+                <div class="property-card">
+                    <div class="property-title">Row Harmony</div>
+                    <div class="property-value" id="rowSum">15</div>
+                    <p>Each row resonates with cosmic balance</p>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-title">Column Alignment</div>
+                    <div class="property-value" id="colSum">15</div>
+                    <p>Columns align with universal energies</p>
+                </div>
+
+                <div class="property-card">
+                    <div class="property-title">Diagonal Convergence</div>
+                    <div class="property-value" id="diagSum">15</div>
+                    <p>Diagonals converge at cosmic intersections</p>
+                </div>
+            </div>
+        </div>
+                <!-- Owl Carousel Container -->
+<div class="owl-carousel owl-theme">
+
+    {% for key in messages %}
+        {% with message_list=messages|get_item:key %}
+            {% if message_list %}
+                <div class="item">
+                    <div class="owl-card-content card-{{ key }}">
+                        <!-- Icon -->
+                        <div class="card-icon">
+                            {% if key == "mind_plane" %}
+                                🧠
+                            {% elif key == "heart_plane" %}
+                                ❤️
+                            {% elif key == "practical_plane" %}
+                                🛠️
+                            {% elif key == "vision_plane" %}
+                                👁️
+                            {% elif key == "will_plane" %}
+                                💪
+                            {% elif key == "action_plane" %}
+                                🎯
+                            {% elif key == "rajyog" %}
+                                🌟💰
+                            {% endif %}
+                        </div>
+
+                        <!-- Title -->
+                        <h3 style="text-transform: capitalize;">
+                            {{ key|replace:"_:" }}
+                        </h3>
+
+                        <!-- Message List -->
+                        <ul class="message-list">
+                            {% for message in message_list %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+</div>
+
+                <!--<div class="item">
+                    <div class="owl-card-title">Cosmic Significance</div>
+                    <div class="owl-card-content">The square is believed to embody cosmic order, balance, and the fundamental principles of the universe, guiding destiny and fortune.</div>
+                </div>
+                <div class="item">
+                    <div class="owl-card-title">Personal Connection</div>
+                    <div class="owl-card-content">By aligning your birth date with the square, you can uncover personal insights and energetic patterns that influence your life's journey.</div>
+                </div> -->
+            </div>
+
+            <p class="owl-details">Navigate through cosmic wisdom using the arrows</p>
+        </div>
+        <div class="footer">
+            <p>Celestial Mathematics Interface | Ancient Wisdom Meets Modern Design</p>
+            <p>© 2023 Cosmic Patterns | All dimensions reserved</p>
+        </div>
+    </div>
+    <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Owl Carousel JS + CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+        <!-- Carousel Init Script -->
+        <script>
+        $(document).ready(function(){
+          $(".owl-carousel").owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: true,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 4000,
+            responsive:{
+              0:{ items:1 },
+              600:{ items:2 },
+              1000:{ items:3 }
+            }
+          });
+        });
+        </script>
+</body>
+</html>

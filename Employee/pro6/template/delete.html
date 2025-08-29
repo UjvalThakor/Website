@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+         <button type="submit">Delete</button>
+        <img src="{% static 'img/delete-2-svgrepo-com.svg' %}" alt="description" />
+        <a href="{% url view  %}">Cancel</a>
+    </form>
+
+</body>
+</html>

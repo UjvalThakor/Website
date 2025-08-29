@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td form {
+            display: inline;
+        }
+
+        td button {
+            margin-right: 5px;
+            padding: 6px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        td button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Student Registration Form</h2>
+    <form  method="POST">
+        {% csrf_token %} <!-- CSRF token for security -->
+        <label for="standard">Standard:</label>
+        <select id="standard" name="standard" required>
+            <option value="" disabled selected>Select your standard</option>
+            <option value="1">class1</option>
+            <option value="2">class2</option>
+            <option value="3">class3</option>
+            <option value="4">class4</option>
+            <option value="5">class5</option>
+            <option value="6">class6</option>
+            <option value="7">class7</option>
+            <option value="8">class8</option>
+            <option value="9">class9</option>
+            <option value="10">class10</option>
+            <option value="11">class11</option>
+            <option value="12">class12</option>
+        </select>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<div>
+    <table>
+        <caption>Student Register</caption>
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Standard</th>
+                <th>Division</th>
+                <th>Roll Number</th>
+                <th>Mobile Number</th>
+                <th>Action</th><!-- Action column -->
+            </tr>
+        </thead>
+        <tbody>
+        {% if d is not None %}
+        {% for ele in d %}
+            <tr>
+                <td>{{ele.Name}}</td><!-- Corrected variable names -->
+                <td>{{ele.Standard}}</td>
+                <td>{{ele.Division}}</td>
+                <td>{{ele.RollNumber}}</td>
+                <td>{{ele.Mobile}}</td>
+                <td>
+                    <!-- Edit Button -->
+                    <form action="{% url 'edit' ele.id ele.Standard  %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Edit</button>
+                    </form>
+
+                    <!-- Delete Button -->
+                    <form action="{% url 'delete' ele.id  ele.Standard %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+
+                    <!-- View Button (GET request) -->
+                    <form action="{% url 'showdata' ele.id ele.Standard  %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit">showdata</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

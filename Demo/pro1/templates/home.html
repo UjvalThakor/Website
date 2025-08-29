@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create the Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 20px; /* Add space between rows and columns */
+            text-align: center;
+            border: 1px solid black;
+        }
+        caption {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <caption>Calculator</caption>
+            <thead>
+                <tr>
+                    <th>Number 1</th>
+                    <th>Number 2</th>
+                    <th>Operators</th>
+                    <th>ans</th>
+                    <th>Action</th> <!-- New Action column -->
+                </tr>
+            </thead>
+            <tbody>
+            {% for ele in data %}
+                <tr>
+                    <td>{{ele.number1}}</td>
+                    <td>{{ele.number2}}</td>
+                    <td>{{ele.operator}}</td>
+                    <td>{{ele.ans}}</td>
+                    <td>
+                        <!-- Form for Edit Button -->
+                        <form action="{% url 'edit' ele.id %}" style="display:inline;">
+                            <button type="submit">Edit</button>
+                        </form>
+
+                        <!-- Form for Delete Button -->
+                        <form action="{% url 'delete' ele.id %}" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+
+                        <!-- Form for View Button (GET request, no CSRF needed) -->
+                        <form action="{% url 'viewdata' ele.id %}" style="display:inline;">
+                            <button type="submit">View</button>
+                        </form>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

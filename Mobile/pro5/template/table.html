@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Table Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .table-container {
+            margin: 0 auto;
+            max-width: 800px;
+            overflow-x: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Basic Table Page</h1>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>mobile</th>
+                    <th>DateTime</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            {% for element in data %}
+                <tr>
+                    <td>{{element.id}}</td>
+                    <td>{{element.mobile}}</td>
+                    <td>{{element.DateTime}}</td>
+                    <td>
+                        <a href="{% url 'edit' element.id %}"><img src="{% static 'img/icons8-edit-50.png' %}"></a>
+                        <a href="{% url 'delete' element.id %}"><img src="{% static 'img/icons8-delete-50.png' %}"></a>
+                        <a href="{% url 'view' element.id %}"><img src="{% static 'img/icons8-eye-checked-50.png' %}"></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button>Add Row</button>
+    </div>
+
+    <script>
+        // Function to add a new row to the table
+        function addRow() {
+            const tableBody = document.getElementById("table-body");
+            const newRow = document.createElement("tr");
+
+            // Sample data for the new row
+            const data = [
+                tableBody.rows.length + 1, // Incrementing ID
+                "New User",
+                Math.floor(Math.random() * 60) + 18, // Random age between 18-77
+                "Unknown" // Default country
+            ];
+
+            // Create table cells for the new row
+            data.forEach(item => {
+                const cell = document.createElement("td");
+                cell.textContent = item;
+                newRow.appendChild(cell);
+            });
+
+            tableBody.appendChild(newRow);
+        }
+    </script>
+</body>
+</html>
